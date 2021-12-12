@@ -1,17 +1,29 @@
 package co.edu.uniandes.twnel.view
 
-import android.graphics.*
-import android.graphics.drawable.BitmapDrawable
+import android.Manifest
+import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
+import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.FileProvider
 import co.edu.uniandes.twnel.R
 import co.edu.uniandes.twnel.databinding.ActivityMainBinding
 import com.google.firebase.ml.vision.FirebaseVision
 import com.google.firebase.ml.vision.common.FirebaseVisionImage
-import com.google.firebase.ml.vision.face.FirebaseVisionFace
-import com.google.firebase.ml.vision.face.FirebaseVisionFaceContour
 import com.google.firebase.ml.vision.face.FirebaseVisionFaceDetectorOptions
+import org.jetbrains.anko.design.snackbar
+import org.jetbrains.anko.imageResource
+import org.jetbrains.anko.toast
+import java.io.File
+
+private const val REQUEST_CODE = 12
+private const val FILE_NAME = "Photo.jpg"
+private lateinit var photoFile: File
 
 class MainActivity : AppCompatActivity() {
 
@@ -22,16 +34,46 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
-        detectFace()
+        val requestCamera = registerForActivityResult(ActivityResultContracts.RequestPermission()) { permission ->
+            if (permission) {
+                val takePictureIntent = Intent(MediaStore.ACTION_IMAGE_CAPTURE)
+                photoFile = getPhotoFile(FILE_NAME)
+
+                //takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, photoFile)
+                val fileProvider = FileProvider.getUriForFile(this, "co.edu.uniandes.twnel.fileprovider", photoFile)
+                takePictureIntent.putExtra(MediaStore.EXTRA_OUTPUT, fileProvider)
+                if (takePictureIntent.resolveActivity(this.packageManager) != null)
+                    startActivityForResult(takePictureIntent, REQUEST_CODE)
+                else
+                    toast("Unable to open camera")
+            } else {
+                toast("Permission denied")
+            }
+        }
+
+        binding.btnCamera.setOnClickListener {
+            requestCamera.launch(Manifest.permission.CAMERA)
+        }
+
     }
 
-    private fun detectFace() {
-        val bitmap = BitmapFactory.decodeResource(
-            this.applicationContext.resources,
-            R.drawable.face
-        )
+    private fun getPhotoFile(fileName: String): File {
+        val storageDirectory = getExternalFilesDir(Environment.DIRECTORY_PICTURES)
+        return File.createTempFile(fileName, ".jpg", storageDirectory)
+    }
 
-        val image = FirebaseVisionImage.fromBitmap(bitmap)
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        if (requestCode == REQUEST_CODE && resultCode == RESULT_OK) {
+            //val imageThumbnail = data?.extras?.get("data") as Bitmap
+            val takenImage = BitmapFactory.decodeFile(photoFile.absolutePath)
+            detectFace(takenImage)
+        } else
+            super.onActivityResult(requestCode, resultCode, data)
+    }
+
+    private fun detectFace(imagebit: Bitmap) {
+
+        val image = FirebaseVisionImage.fromBitmap(imagebit)
 
         val options = FirebaseVisionFaceDetectorOptions.Builder()
             .setPerformanceMode(FirebaseVisionFaceDetectorOptions.FAST)
@@ -44,56 +86,19 @@ class MainActivity : AppCompatActivity() {
         detector.detectInImage(image)
             .addOnSuccessListener { faces ->
                 Log.d("Faces detected", faces.size.toString())
-                for (i in faces.indices)
-                    draw(faces[0], bitmap)
+                if (faces.size > 0) {
+                    binding.ivPreviewPhoto.setImageBitmap(imagebit)
+                    toast("Face detected")
+                }
+                else {
+                    binding.ivPreviewPhoto.imageResource = R.drawable.noimageavailable
+                    binding.ivPreviewPhoto.snackbar("No face detected. Please, try take a photo again")
+                }
             }
             .addOnFailureListener { e ->
+                binding.ivPreviewPhoto.imageResource = R.drawable.noimageavailable
+                binding.ivPreviewPhoto.snackbar("There was an error detecting the face")
                 Log.d("Error", e.toString())
             }
-    }
-
-    private fun draw(
-        face: FirebaseVisionFace,
-        myBitmap: Bitmap
-    ) {
-
-        val tempBitmap = Bitmap.createBitmap(myBitmap.width, myBitmap.height, Bitmap.Config.RGB_565)
-        val canvas = Canvas(tempBitmap)
-
-        canvas.drawBitmap(myBitmap, 0f, 0f, null)
-
-        val selectedColor = Color.RED
-        val facePositionPaint = Paint()
-        facePositionPaint.color = selectedColor
-
-        val boxPaint = Paint()
-        boxPaint.color = selectedColor
-        boxPaint.style = Paint.Style.STROKE
-        boxPaint.strokeWidth = BOX_STROKE_WIDTH
-
-        val x = face.boundingBox.centerX().toFloat()
-        val y = face.boundingBox.centerY().toFloat()
-
-        val xOffset = face.boundingBox.width() / 2.0f
-        val yOffset = face.boundingBox.height() / 2.0f
-        val left = x - xOffset
-        val top = y - yOffset
-        val right = x + xOffset
-        val bottom = y + yOffset
-        canvas.drawRect(left, top, right, bottom, boxPaint)
-
-        val contour = face.getContour(FirebaseVisionFaceContour.ALL_POINTS)
-        for (point in contour.points) {
-            val px = point.x
-            val py = point.y
-            canvas.drawCircle(px, py, FACE_POSITION_RADIUS, facePositionPaint)
-        }
-
-        binding.ivPreviewPhoto.setImageDrawable(BitmapDrawable(resources, tempBitmap))
-    }
-
-    companion object {
-        private const val FACE_POSITION_RADIUS = 10.0f
-        private const val BOX_STROKE_WIDTH = 15.0f
     }
 }
