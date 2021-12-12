@@ -20,12 +20,12 @@
 
     <ImageView
         android:id="@+id/ivPreviewPhoto"
-        android:layout_width="300dp"
-        android:layout_height="300dp"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
         app:layout_constraintBottom_toTopOf="@+id/btnCamera"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        tools:srcCompat="@tools:sample/avatars"
+        android:src="@drawable/face"
         android:contentDescription="@string/image_view_content_description"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

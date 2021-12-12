@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "990409042500",
+    "project_id": "twnel-facedetector",
+    "storage_bucket": "twnel-facedetector.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:990409042500:android:14dcbeccea6c98fa15aa11",
+        "android_client_info": {
+          "package_name": "co.edu.uniandes.twnel"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "990409042500-mjd8rc7cu7r4jn9glh8caf4rgitp0bp0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA4Cx_xueZjmLFC8l5WyDEDcllr8c05_OM"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "990409042500-mjd8rc7cu7r4jn9glh8caf4rgitp0bp0.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
