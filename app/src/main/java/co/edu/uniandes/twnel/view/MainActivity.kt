@@ -95,13 +95,19 @@ class MainActivity : AppCompatActivity() {
 
         binding.switchCam.setOnClickListener {
             flagCameraX = !flagCameraX
+            binding.ivPreviewPhoto.imageResource = R.drawable.noimageavailable
             if (flagCameraX) {
+                binding.switchCam.text = getString(R.string.camera_app)
                 binding.tvLabelCamera.text = getString(R.string.camera_x_api)
+                binding.preview.visibility = View.VISIBLE
                 binding.btnTakePhoto.visibility = View.VISIBLE
             }
             else {
+                binding.switchCam.text = getString(R.string.camera_x_api)
                 binding.tvLabelCamera.text = getString(R.string.camera_app)
+                binding.preview.visibility = View.GONE
                 binding.btnTakePhoto.visibility = View.GONE
+                binding.preview.removeAllViews()
             }
         }
 
