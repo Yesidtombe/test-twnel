@@ -18,15 +18,60 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent" />
 
+    <Button
+        android:id="@+id/switchCam"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="8dp"
+        android:text="@string/camera_x_api"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        />
+
+    <Button
+        android:id="@+id/btnTakePhoto"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:text="@string/btn_take_a_photo"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:visibility="gone"
+        />
+
+    <TextView
+        android:id="@+id/tvLabelCamera"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toTopOf="@id/preview"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="@string/camera_app"
+        android:textSize="16sp"
+        android:layout_marginBottom="4dp"
+        />
+
+    <androidx.camera.view.PreviewView
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:id="@+id/preview"
+        app:layout_constraintBottom_toTopOf="@+id/btnCamera"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/ivPreviewPhoto"
+        android:layout_margin="12dp"/>
+
     <ImageView
         android:id="@+id/ivPreviewPhoto"
         android:layout_width="0dp"
         android:layout_height="0dp"
-        app:layout_constraintBottom_toTopOf="@+id/btnCamera"
+        app:layout_constraintBottom_toTopOf="@+id/preview"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="12dp"
+        app:layout_constraintTop_toBottomOf="@id/switchCam"
+        android:layout_margin="16dp"
         android:src="@drawable/noimageavailable"
         android:contentDescription="@string/image_view_content_description"/>
 </androidx.constraintlayout.widget.ConstraintLayout>

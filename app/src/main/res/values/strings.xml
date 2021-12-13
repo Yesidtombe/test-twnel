@@ -1,5 +1,8 @@
 <resources>
     <string name="app_name">Twnel</string>
-    <string name="button_open_camera">Camera</string>
+    <string name="button_open_camera">Open Camera</string>
     <string name="image_view_content_description">Image preview</string>
+    <string name="btn_take_a_photo">Take a photo</string>
+    <string name="camera_app">Camera App</string>
+    <string name="camera_x_api">API Camera X</string>
 </resources>
