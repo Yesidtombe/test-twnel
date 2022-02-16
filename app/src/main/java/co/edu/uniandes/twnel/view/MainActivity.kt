@@ -131,6 +131,7 @@ class MainActivity : AppCompatActivity() {
                 object : ImageCapture.OnImageSavedCallback {
                     override fun onImageSaved(outputFileResults: ImageCapture.OutputFileResults){
                         Log.i(TAG,"The image has been saved in ${file.toUri()}")
+                        // Before decoding to Bitmap, it must first be verified that the creation thread has finished and executed in the mainThread
                         val takenImage = BitmapFactory.decodeFile(file.absolutePath)
                         detectFace(takenImage)
                     }
